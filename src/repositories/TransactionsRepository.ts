@@ -28,17 +28,9 @@ class TransactionsRepository {
     // TODO
     let income = 0;
     let outcome = 0;
-    const allTransactions = this.transactions;
 
-    function calculate(type: 'income' | 'outcome', value: number): null {
-      if (type === 'income') {
-        income += value;
-      } else {
-        outcome += value;
-      }
-      return null;
-    }
-    allTransactions.forEach(item => calculate(item.type, item.value));
+    income = this.getAccumulatedTransactionsValueByType('income');
+    outcome = this.getAccumulatedTransactionsValueByType('outcome');
 
     const balance = {
       income,
@@ -47,6 +39,15 @@ class TransactionsRepository {
     };
 
     return balance;
+  }
+
+  private getAccumulatedTransactionsValueByType(type: string): number {
+    return this.transactions.reduce((accumulator, transaction) => {
+      if (transaction.type === type) {
+        return accumulator + transaction.value;
+      }
+      return accumulator;
+    }, 0);
   }
 
   public create({ title, value, type }: CreateTransactionDTO): Transaction {
